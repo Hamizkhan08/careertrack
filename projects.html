@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - Career Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(139, 69, 255, 0.15);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(139, 69, 255, 0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            background: linear-gradient(45deg, #8b45ff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            padding: 12px 24px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 69, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+
+        .nav-links a:hover {
+            background: rgba(139, 69, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 69, 255, 0.3);
+            color: white;
+        }
+
+        .nav-links a.active {
+            background: rgba(139, 69, 255, 0.3);
+            color: white;
+        }
+
+        /* Main Content */
+        main {
+            position: relative;
+            z-index: 2;
+            padding: 120px 50px 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .page-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #8b45ff, #00d4ff, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: rgba(224, 224, 224, 0.8);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            animation: slideInUp 0.8s ease-out 0.4s both;
+        }
+
+        .project-card {
+            background: rgba(26, 26, 46, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 69, 255, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            min-height: 200px; /* Use min-height to ensure cards have a decent size */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(139, 69, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(139, 69, 255, 0.4);
+            background: rgba(26, 26, 46, 0.8);
+            border-color: rgba(139, 69, 255, 0.5);
+        }
+
+        .project-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .project-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #8b45ff, #00d4ff);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 69, 255, 0.3);
+        }
+
+        .project-card:hover .project-icon {
+            transform: scale(1.1) rotate(360deg);
+            box-shadow: 0 6px 20px rgba(139, 69, 255, 0.5);
+        }
+
+        .project-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+        }
+
+        .project-description {
+            color: rgba(224, 224, 224, 0.8);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .tech-tag {
+            padding: 4px 12px;
+            background: rgba(139, 69, 255, 0.2);
+            border: 1px solid rgba(139, 69, 255, 0.3);
+            border-radius: 20px;
+            color: #e0e0e0;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Hover Details */
+        .project-details {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .project-card:hover .project-details {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        .details-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #8b45ff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .details-section {
+            margin-bottom: 15px;
+        }
+
+        .details-label {
+            font-weight: 600;
+            color: #8b45ff;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .details-content {
+            color: rgba(224, 224, 224, 0.9);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        /* Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            main {
+                padding: 120px 20px 50px;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .project-card {
+                min-height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">CareerTrack</a>
+            <ul class="nav-links">
+                 <li>
+      <a href="index.html" title="Home">🏠</a>
+    </li>
+                   <li><a href="internship.html">Internships</a></li>
+  <li><a href="certifications.html">Certifications</a></li>
+
+  <li><a href="projects.html">Projects & Code</a></li>
+    <li><a href="schedule.html">Weekly Schedule</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="page-header">
+            <h1 class="page-title">My Projects</h1>
+            <p class="page-subtitle">A collection of projects showcasing my skills in Machine Learning, NLP, and Web Development.</p>
+        </div>
+
+        <div class="projects-grid" id="projectsGrid">
+            <!-- Projects will be populated by JavaScript -->
+        </div>
+    </main>
+
+    <script>
+        // Your project data
+        const projects = [
+            {
+                id: 1,
+                title: "Job Resume Classifier",
+                icon: "📄",
+                description: "Auto-screens and classifies resumes into job roles to streamline HR screening.",
+                technologies: ["Python", "NLP", "TF-IDF", "Flask", "Machine Learning"],
+                details: {
+                    objective: "Automate the initial resume screening process for HR departments.",
+                    features: "Cleans and preprocesses resumes (PDF/Docx), uses NLP (TF-IDF) to classify roles, provides a Flask interface for uploads and a results dashboard.",
+                    outcome: "A functional tool that predicts a job role from an uploaded resume."
+                },
+                links: []
+            },
+            {
+                id: 2,
+                title: "Music Genre Classification",
+                icon: "🎵",
+                description: "Predicts the genre of a song based on an analysis of its lyrics.",
+                technologies: ["Python", "NLP", "TF-IDF", "Embeddings", "ML"],
+                details: {
+                    objective: "Build an ML/NLP model to determine a song's genre from its lyrical content.",
+                    features: "Processes and cleans lyrics using an NLP pipeline, converts text to numerical vectors (TF-IDF or embeddings) for classification.",
+                    outcome: "A model capable of classifying songs into genres like Pop, Rock, Hip-Hop, etc., based on words used in the lyrics."
+                },
+                links: []
+            },
+            {
+                id: 3,
+                title: "Missing Person Matcher",
+                icon: "🕵️",
+                description: "Matches blurred or partial photos of individuals against a missing persons database.",
+                technologies: ["Python", "CNN", "OpenCV", "Flask", "Face Recognition"],
+                details: {
+                    objective: "Aid disaster response teams by identifying people from low-quality images.",
+                    features: "Uses Convolutional Neural Networks (CNNs) for robust face recognition, with a simple Flask interface for image submission.",
+                    outcome: "A system that increases the chances of identifying and locating missing individuals in critical situations."
+                },
+                links: []
+            },
+            {
+                id: 4,
+                title: "ATM Cash Run-Out Prediction",
+                icon: "🏧",
+                description: "Predicts ATM cash shortages and recommends optimal cash loads to improve availability.",
+                technologies: ["Python", "Time Series Analysis", "Predictive Modeling"],
+                details: {
+                    objective: "Prevent cash run-outs in ATMs, especially in rural areas during peak demand.",
+                    features: "Predicts cash run-out likelihood for the next 3 days and recommends load amounts to minimize idle cash while ensuring availability.",
+                    outcome: "An optimization system to improve ATM network efficiency and customer satisfaction."
+                },
+                links: []
+            },
+            {
+                id: 5,
+                title: "Salary Negotiation Advisor",
+                icon: "💰",
+                description: "Predicts a fair salary range for freshers based on their skills, college, and location.",
+                technologies: ["Python", "Regression", "Feature Engineering", "Flask"],
+                details: {
+                    objective: "Empower job-seeking freshers with data-driven salary expectations.",
+                    features: "A regression model trained on placement data that considers skill scores, location index, and other features to predict a salary.",
+                    outcome: "A helpful tool for freshers to better understand their market value during job interviews."
+                },
+links: []
+            },
+            {
+                id: 6,
+                title: "Home Energy Spike Advisor",
+                icon: "💡",
+                description: "Identifies activities causing home energy spikes and suggests optimizations.",
+                technologies: ["Python", "Time Series", "Clustering", "Flask"],
+                details: {
+                    objective: "Help users understand and reduce their household's peak electricity consumption.",
+                    features: "Uses time series segmentation and clustering to identify high-usage patterns from smart meter data and suggests habit-based changes.",
+                    outcome: "A personalized dashboard that offers actionable tips for energy conservation."
+                },
+                links: []
+            },
+            {
+                id: 7,
+                title: "Fitness & Nutrition Recommender",
+                icon: "💪",
+                description: "Generates personalized fitness and diet plans using user data and a Random Forest model.",
+                technologies: ["Python", "Flask", "MySQL", "Random Forest"],
+                details: {
+                    objective: "Create a website that provides tailored fitness and diet guidance.",
+                    features: "Takes user data (goals, stats) to generate custom plans using a Random Forest algorithm.",
+                    outcome: "A recommendation engine that delivers personalized health and wellness plans."
+                },
+                links: []
+            },
+            {
+                id: 8,
+                title: "Ingredient & Mood Recipe Recommender",
+                icon: "🍳",
+                description: "Suggests recipes based on ingredients you have and your current mood.",
+                technologies: ["Flask", "NLP", "Clustering", "YouTube API"],
+                details: {
+                    objective: "Solve the daily 'what to eat?' dilemma in a creative way.",
+                    features: "Uses ML clustering to match ingredients and moods (e.g., 'tired', 'date night') to suitable recipes, with an option to fetch trending ideas.",
+                    outcome: "A fun, daily-use application that makes cooking decisions easier and more inspired."
+                },
+                links: []
+            },
+            {
+                id: 9,
+                title: "Degree ROI Calculator",
+                icon: "🎓",
+                description: "Calculates the financial return on investment for a university degree.",
+                technologies: ["Python", "Regression", "Data Science", "Flask"],
+                details: {
+                    objective: "Help students assess the financial viability of expensive degrees.",
+                    features: "Takes course, college, and fees as input to predict salary at 1, 5, and 10 years, plus the degree payback time.",
+                    outcome: "A unique tool combining education, finance, and career data to guide students' decisions."
+                },
+                links: []
+            },
+            {
+                id: 10,
+                title: "Medical Test Explainer",
+                icon: "🩺",
+                description: "Analyzes and translates complex medical lab reports into simple, understandable summaries.",
+                technologies: ["Python", "NLP", "PDF Parsing", "Text Summarization"],
+                details: {
+                    objective: "Make medical reports less confusing for patients.",
+                    features: "User uploads a PDF report; the system extracts values, compares them to normal ranges, and generates a natural language summary.",
+                    outcome: "An application that can explain results like 'Your vitamin D is low, which may cause fatigue.'"
+                },
+                links: []
+            },
+            {
+                id: 11,
+                title: "Doctor Conversation Summarizer",
+                icon: "🎙️",
+                description: "Summarizes an audio recording of a doctor-patient conversation into key points.",
+                technologies: ["Speech-to-Text", "NLP", "NER", "Python"],
+                details: {
+                    objective: "Help patients remember and understand a doctor's instructions.",
+                    features: "Uses speech-to-text to transcribe the audio, medical NER (Named Entity Recognition) to identify key terms, and summarization to create a simple output.",
+                    outcome: "A powerful accessibility tool that provides patients with clear, concise summaries of their consultations."
+                },
+                links: []
+            }
+        ];
+
+        function createProjectCard(project) {
+            const techTags = project.technologies.map(tech => 
+                `<span class="tech-tag">${tech}</span>`
+            ).join('');
+
+            return `
+                <div class="project-card">
+                    <div>
+                        <div class="project-header">
+                            <div class="project-icon">${project.icon}</div>
+                            <h3 class="project-title">${project.title}</h3>
+                        </div>
+                        <p class="project-description">${project.description}</p>
+                    </div>
+                    <div class="project-tech">
+                        ${techTags}
+                    </div>
+                    
+                    <div class="project-details">
+                        <h4 class="details-title">${project.title}</h4>
+                        <div class="details-section">
+                            <div class="details-label">Objective:</div>
+                            <div class="details-content">${project.details.objective}</div>
+                        </div>
+                        <div class="details-section">
+                            <div class="details-label">Key Features:</div>
+                            <div class="details-content">${project.details.features}</div>
+                        </div>
+                        <div class="details-section">
+                            <div class="details-label">Outcome:</div>
+                            <div class="details-content">${project.details.outcome}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProjects() {
+            const projectsGrid = document.getElementById('projectsGrid');
+            projectsGrid.innerHTML = projects.map(createProjectCard).join('');
+        }
+
+        // Create animated background particles
+        function createParticles() {
+            const bgAnimation = document.getElementById('bgAnimation');
+            if (!bgAnimation) return;
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 5 + 2;
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                const delay = Math.random() * 6;
+                
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.animationDelay = delay + 's';
+                
+                bgAnimation.appendChild(particle);
+            }
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(26, 26, 46, 0.9)';
+                nav.style.backdropFilter = 'blur(25px)';
+            } else {
+                nav.style.background = 'rgba(26, 26, 46, 0.8)';
+                nav.style.backdropFilter = 'blur(20px)';
+            }
+        });
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            renderProjects();
+        });
+    </script>
+</body>
+</html>

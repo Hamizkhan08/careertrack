@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship Manager - CareerTrack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(139, 69, 255, 0.15);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(139, 69, 255, 0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            background: linear-gradient(45deg, #8b45ff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            padding: 12px 24px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a.active {
+            background: rgba(139, 69, 255, 0.3);
+            color: white;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 69, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+
+        .nav-links a:hover {
+            background: rgba(139, 69, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 69, 255, 0.3);
+            color: white;
+        }
+
+        /* Main Content */
+        main {
+            position: relative;
+            z-index: 2;
+            padding: 120px 20px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #8b45ff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: rgba(224, 224, 224, 0.8);
+        }
+
+        /* Add New Button */
+        .add-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 30px;
+            animation: slideInUp 0.8s ease-out 0.2s both;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #8b45ff, #00d4ff);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(139, 69, 255, 0.3);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(139, 69, 255, 0.4);
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: rgba(26, 26, 46, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 69, 255, 0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out 0.4s both;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table thead {
+            background: rgba(139, 69, 255, 0.2);
+        }
+
+        .table th {
+            padding: 20px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: white;
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(139, 69, 255, 0.3);
+        }
+
+        .table td {
+            padding: 15px;
+            color: rgba(224, 224, 224, 0.9);
+            border-bottom: 1px solid rgba(139, 69, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(139, 69, 255, 0.1);
+        }
+
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn {
+            background: linear-gradient(135deg, #00d4ff, #8b45ff);
+            color: white;
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Status badges */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .status-accepted {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .status-rejected {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .status-interview {
+            background: rgba(139, 69, 255, 0.2);
+            color: #8b45ff;
+            border: 1px solid rgba(139, 69, 255, 0.3);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            margin: 5% auto;
+            padding: 40px;
+            border: 1px solid rgba(139, 69, 255, 0.3);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            margin-bottom: 30px;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(45deg, #8b45ff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: rgba(224, 224, 224, 0.9);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid rgba(139, 69, 255, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: rgba(139, 69, 255, 0.6);
+            box-shadow: 0 0 15px rgba(139, 69, 255, 0.2);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b45ff, #00d4ff);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(224, 224, 224, 0.1);
+            color: rgba(224, 224, 224, 0.8);
+            border: 1px solid rgba(224, 224, 224, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            color: rgba(224, 224, 224, 0.6);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: -10px;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(224, 224, 224, 0.6);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-message {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .empty-submessage {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 20px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            .nav-links a {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .table {
+                min-width: 600px;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+                padding: 30px;
+            }
+        }
+        /* --- NEW: Pagination Styles --- */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 0;
+    gap: 8px;
+    animation: slideInUp 0.8s ease-out 0.6s both;
+}
+
+.page-btn {
+    background: rgba(26, 26, 46, 0.8);
+    border: 1px solid rgba(139, 69, 255, 0.3);
+    color: #e0e0e0;
+    padding: 10px 15px;
+    margin: 0 2px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: rgba(139, 69, 255, 0.2);
+    border-color: rgba(139, 69, 255, 0.6);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.page-btn.active {
+    background: linear-gradient(135deg, #8b45ff, #00d4ff);
+    color: white;
+    border-color: #8b45ff;
+    cursor: default;
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">CareerTrack</a>
+            <ul class="nav-links">
+                 <li>
+      <a href="index.html" title="Home">🏠</a>
+    </li>
+                   <li><a href="internship.html">Internships</a></li>
+  <li><a href="certifications.html">Certifications</a></li>
+
+  <li><a href="projects.html">Projects & Code</a></li>
+    <li><a href="schedule.html">Weekly Schedule</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="page-header">
+            <h1 class="page-title">Internship Manager</h1>
+            <p class="page-subtitle">Track and manage all your internship applications in one place</p>
+        </div>
+
+        <div class="add-section">
+           <button class="add-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/1D4RAimr3j5qQ7KpcdMjgHpkvGFpciSOrS2iBHE9uNto/edit?usp=sharing', '_blank')">
+    ➕ Add New Internship
+</button>
+
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Sr No</th>
+                        <th>Company Name</th>
+                        <th>Date Applied</th>
+                        <th>Result</th>
+                       
+                    </tr>
+                </thead>
+                <tbody id="internshipTableBody">
+                    <!-- Table rows will be inserted here -->
+                </tbody>
+            </table>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-icon">💼</div>
+                <div class="empty-message">No internships added yet</div>
+                <div class="empty-submessage">Click "Add New Internship" to get started!</div>
+            </div>
+        </div>
+          <div id="pagination-container" class="pagination-container"></div>
+    </main>
+
+    <!-- Add/Edit Modal -->
+    <div id="internshipModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2 class="modal-title" id="modalTitle">Add New Internship</h2>
+            </div>
+            <form id="internshipForm">
+                <div class="form-group">
+                    <label class="form-label">Company Name</label>
+                    <input type="text" id="companyName" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date Applied</label>
+                    <input type="date" id="dateApplied" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Result</label>
+                    <select id="result" class="form-select" required>
+                        <option value="">Select Result</option>
+                        <option value="pending">Pending</option>
+                        <option value="interview">Interview Scheduled</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Add Internship</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script>
+    // --- Start of Changed JavaScript ---
+
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzwZBvoUh7aMHgRwGJWrWRUK4V2GlsYwwO-6YKg-mTY-525kshINTxXT3Ye8Fuzpzvg/exec';
+
+    // --- NEW: Pagination State Variables ---
+    let allInternships = []; // This will hold ALL fetched data from the sheet
+    let currentPage = 1;
+    const rowsPerPage = 5; // You can change this to show more/less items per page
+
+    // Fetches all data and triggers the display of the first page
+    async function fetchAndRenderData() {
+        const tbody = document.getElementById('internshipTableBody');
+        const emptyState = document.getElementById('emptyState');
+        
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        emptyState.querySelector('.empty-message').textContent = 'Loading applications from Google Sheet...';
+        emptyState.querySelector('.empty-submessage').textContent = 'Please wait a moment.';
+
+        try {
+            const response = await fetch(SCRIPT_URL);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
+
+            // Store all data globally
+            allInternships = data.map(row => ({
+                companyName: row.CompanyName || '',
+                dateApplied: row.DateApplied || '', 
+                result: (row.Result || 'pending').toString().toLowerCase().replace(/\s+/g, '')
+            }));
+            
+            currentPage = 1; // Reset to the first page on new data load
+            displayPage(currentPage); // Display the first page
+
+        } catch (error) {
+            console.error("Failed to fetch data:", error);
+            showErrorState();
+        }
+    }
+    
+    // --- NEW: This function displays a specific page of data ---
+    function displayPage(page) {
+        currentPage = page;
+        const startIndex = (currentPage - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+        
+        // Get the slice of data for the current page
+        const paginatedItems = allInternships.slice(startIndex, endIndex);
+
+        renderTable(paginatedItems); // Render only this page's data
+        setupPagination(); // Re-create the pagination buttons
+    }
+
+    // --- MODIFIED: This function now renders only the data passed to it ---
+    function renderTable(pageData) {
+        const tbody = document.getElementById('internshipTableBody');
+        const emptyState = document.getElementById('emptyState');
+
+        // Handle the case where there is no data at all
+        if (allInternships.length === 0) {
+            tbody.innerHTML = '';
+            emptyState.style.display = 'block';
+            emptyState.querySelector('.empty-message').textContent = 'No internships added yet';
+            emptyState.querySelector('.empty-submessage').textContent = 'Click "Add New Internship" to get started!';
+            document.getElementById('pagination-container').innerHTML = ''; // Clear pagination controls
+            return;
+        }
+
+        emptyState.style.display = 'none';
+        tbody.innerHTML = pageData.map((internship, index) => {
+            // Calculate the correct Sr. No. for the item's global position
+            const globalIndex = (currentPage - 1) * rowsPerPage + index; 
+            let statusClass = 'pending';
+            if (internship.result === 'accepted') statusClass = 'accepted';
+            else if (internship.result === 'rejected') statusClass = 'rejected';
+            else if (internship.result === 'interview') statusClass = 'interview';
+            
+            return `
+            <tr>
+                <td>${globalIndex + 1}</td>
+                <td>${internship.companyName}</td>
+                <td>${new Date(internship.dateApplied).toLocaleDateString()}</td>
+                <td><span class="status-badge status-${statusClass}">${internship.result}</span></td>
+            </tr>`;
+        }).join('');
+    }
+    
+    // --- NEW: This function creates the pagination buttons ---
+    function setupPagination() {
+        const paginationContainer = document.getElementById('pagination-container');
+        paginationContainer.innerHTML = ''; // Clear old buttons
+        
+        const pageCount = Math.ceil(allInternships.length / rowsPerPage);
+        if (pageCount <= 1) return; // Don't show controls if there's only one page
+
+        // Previous Button
+        const prevButton = document.createElement('button');
+        prevButton.classList.add('page-btn');
+        prevButton.innerText = '« Prev';
+        prevButton.addEventListener('click', () => displayPage(currentPage - 1));
+        if (currentPage === 1) prevButton.disabled = true;
+        paginationContainer.appendChild(prevButton);
+
+        // Page Number Buttons
+        for (let i = 1; i <= pageCount; i++) {
+            const btn = document.createElement('button');
+            btn.classList.add('page-btn');
+            btn.innerText = i;
+            if (i === currentPage) {
+                btn.classList.add('active');
+            }
+            btn.addEventListener('click', () => displayPage(i));
+            paginationContainer.appendChild(btn);
+        }
+
+        // Next Button
+        const nextButton = document.createElement('button');
+        nextButton.classList.add('page-btn');
+        nextButton.innerText = 'Next »';
+        nextButton.addEventListener('click', () => displayPage(currentPage + 1));
+        if (currentPage === pageCount) nextButton.disabled = true;
+        paginationContainer.appendChild(nextButton);
+    }
+    
+    // --- Helper functions (Unchanged) ---
+    function showErrorState() {
+        const emptyState = document.getElementById('emptyState');
+        emptyState.style.display = 'block';
+        emptyState.querySelector('.empty-message').textContent = 'Failed to load data';
+        emptyState.querySelector('.empty-submessage').textContent = 'Please check the connection or the script URL.';
+    }
+
+    function createParticles() {
+        const bgAnimation = document.getElementById('bgAnimation');
+        const particleCount = 30;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            const size = Math.random() * 5 + 2;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.top = Math.random() * window.innerHeight + 'px';
+            particle.style.animationDelay = Math.random() * 6 + 's';
+            bgAnimation.appendChild(particle);
+        }
+    }
+
+    window.addEventListener('scroll', () => {
+        const nav = document.querySelector('nav');
+        if (window.scrollY > 50) {
+            nav.style.background = 'rgba(26, 26, 46, 0.9)';
+            nav.style.backdropFilter = 'blur(25px)';
+        } else {
+            nav.style.background = 'rgba(26, 26, 46, 0.8)';
+            nav.style.backdropFilter = 'blur(20px)';
+        }
+    });
+
+    // Initialize everything when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        createParticles();
+        fetchAndRenderData(); // This starts the entire process
+    });
+    
+    // --- End of Changed JavaScript ---
+</script>
+</body>
+</html>
