@@ -39,7 +39,7 @@
 ## 🖼️ Preview
 
 ![CareerTrack Screenshot](![image](https://github.com/user-attachments/assets/447dd9c6-ed75-4cb8-939d-6387327a2721)
-) <sub>*Replace with actual image or upload a screenshot in the repo*</sub>
+)
 
 ---
 
