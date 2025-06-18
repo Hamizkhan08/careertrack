@@ -38,7 +38,8 @@
 
 ## 🖼️ Preview
 
-![CareerTrack Screenshot](https://careertrackk.netlify.app/assets/screenshot.png) <sub>*Replace with actual image or upload a screenshot in the repo*</sub>
+![CareerTrack Screenshot](![image](https://github.com/user-attachments/assets/447dd9c6-ed75-4cb8-939d-6387327a2721)
+) <sub>*Replace with actual image or upload a screenshot in the repo*</sub>
 
 ---
 
@@ -54,15 +55,6 @@
 2. Open `index.html` in your browser to start using the dashboard.
 
 3. Host it online using GitHub Pages or Netlify for public access.
-
----
-
-## 📈 Roadmap (Ideas to Improve)
-
-* Add local storage to save user inputs
-* Use JS frameworks like React/Vue for scalability
-* Integrate authentication and user-specific data
-* Add resume/CV builder module
 
 ---
 
